@@ -8,7 +8,7 @@ import (
 
 func main() {
 	// Start collector
-	log.Printf("Starting InfraSonar Qstar Agent Collector v%s\n", version)
+	log.Printf("Starting InfraSonar QStar Agent Collector v%s\n", version)
 
 	// Initialize random
 	libagent.RandInit()
@@ -25,20 +25,20 @@ func main() {
 
 	// Create Asset
 	asset := libagent.NewAsset(collector)
-	asset.Kind = "Linux"
+	// asset.Kind = "Linux"
 	asset.Announce()
 
 	// Create and plan checks
-	checkSystem := libagent.Check{
-		Key:          "system",
+	checkQstar := libagent.Check{
+		Key:          "qstar",
 		Collector:    collector,
 		Asset:        asset,
-		IntervalEnv:  "CHECK_SYSTEM_INTERVAL",
+		IntervalEnv:  "CHECK_QSTAR_INTERVAL",
 		NoCount:      false,
 		SetTimestamp: false,
 		Fn:           CheckQstar,
 	}
-	go checkSystem.Plan(quit)
+	go checkQstar.Plan(quit)
 
 	// Wait for quit
 	<-quit

@@ -1,7 +1,7 @@
 [![CI](https://github.com/infrasonar/qstar-agent/workflows/CI/badge.svg)](https://github.com/infrasonar/qstar-agent/actions)
 [![Release Version](https://img.shields.io/github/release/infrasonar/qstar-agent)](https://github.com/infrasonar/qstar-agent/releases)
 
-# InfraSonar Qstar Agent
+# InfraSonar QStar Agent
 
 Documentation: https://docs.infrasonar.com/collectors/agents/qstar/
 
@@ -14,10 +14,32 @@ Environment                 | Default                       | Description
 `ASSET_NAME`                | _none_                        | Initial Asset Name. This will only be used at the announce. Once the asset is created, `ASSET_NAME` will be ignored.
 `ASSET_ID`                  | _none_                        | Asset Id _(If not given, the asset Id will be stored and loaded from file)_.
 `API_URI`                   | https://api.infrasonar.com    | InfraSonar API.
+`SKIP_VERIFY`				| _none_						| Set to `1` or something else to skip certificate validation.
 `CHECK_QSTAR_INTERVAL`      | `300`                         | Interval in seconds for the `qstar` check.
 
 
+## Build
+```
+CGO_ENABLED=0 go build -o qstar-agent
+```
+
 ## Installation
+
+Download the latest release:
+```bash
+$ wget https://github.com/infrasonar/qstar-agent/releases/download/v0.1.0/qstar-agent
+```
+
+Ensure the binary is executable:
+```
+chmod +x qstar-agent
+```
+
+Copy the binary to `/usr/sbin/infrasonar-qstar-agent`
+
+```
+$ sudo cp qstar-agent /usr/sbin/infrasonar-qstar-agent
+```
 
 ### Using Systemd
 
@@ -30,7 +52,7 @@ Using you favorite editor, add the content below to the file created
 
 ```
 [Unit]
-Description=InfraSonar Linux Agent
+Description=InfraSonar QStar Agent
 Wants=network.target
 
 [Service]
@@ -65,3 +87,4 @@ View logging:
 ```bash
 $ journalctl -u infrasonar-qstar-agent
 ```
+
