@@ -182,7 +182,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		}
 
 		// high_primary_capacity
-		if strings.HasPrefix(line, "Low primary capacity:") {
+		if strings.HasPrefix(line, "High primary capacity:") {
 			i, err := getPages(line)
 			if err != nil {
 				return nil, errors.New("failed to read `high_primary_capacity`")
@@ -260,6 +260,7 @@ func readFilesystem(filesystem string) (*params, error) {
 				return nil, errors.New("failed to read `present_pages`")
 			}
 			item["present_pages"] = i
+			item["present_bytes"] = i * pageSize
 			continue
 		}
 
@@ -270,6 +271,7 @@ func readFilesystem(filesystem string) (*params, error) {
 				return nil, errors.New("failed to read `primary_pages`")
 			}
 			item["primary_pages"] = i
+			item["primary_bytes"] = i * pageSize
 			continue
 		}
 
@@ -280,6 +282,7 @@ func readFilesystem(filesystem string) (*params, error) {
 				return nil, errors.New("failed to read `replicated_pages`")
 			}
 			item["replicated_pages"] = i
+			item["replicated_bytes"] = i * pageSize
 			continue
 		}
 
@@ -290,6 +293,7 @@ func readFilesystem(filesystem string) (*params, error) {
 				return nil, errors.New("failed to read `archived_pages`")
 			}
 			item["archived_pages"] = i
+			item["archived_bytes"] = i * pageSize
 			continue
 		}
 
