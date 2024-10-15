@@ -1,7 +1,7 @@
 [![CI](https://github.com/infrasonar/qstar-agent/workflows/CI/badge.svg)](https://github.com/infrasonar/qstar-agent/actions)
 [![Release Version](https://img.shields.io/github/release/infrasonar/qstar-agent)](https://github.com/infrasonar/qstar-agent/releases)
 
-# InfraSonar Linux Agent
+# InfraSonar Qstar Agent
 
 Documentation: https://docs.infrasonar.com/collectors/agents/qstar/
 
