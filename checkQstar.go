@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/infrasonar/go-libagent"
 )
 
 var reSplit = regexp.MustCompile(`\r?\n`)
@@ -508,7 +510,7 @@ func readFilesystem(filesystem string) (*params, error) {
 	}, nil
 }
 
-func CheckQstar() (map[string][]map[string]any, error) {
+func CheckQstar(_ *libagent.Check) (map[string][]map[string]any, error) {
 	state := map[string][]map[string]any{}
 
 	// out, err := exec.Command("bash", "-c", "cat df.output.example.txt").Output()
