@@ -30,13 +30,14 @@ func main() {
 
 	// Create and plan checks
 	checkQstar := libagent.Check{
-		Key:          "qstar",
-		Collector:    collector,
-		Asset:        asset,
-		IntervalEnv:  "CHECK_QSTAR_INTERVAL",
-		NoCount:      false,
-		SetTimestamp: false,
-		Fn:           CheckQstar,
+		Key:             "qstar",
+		Collector:       collector,
+		Asset:           asset,
+		IntervalEnv:     "CHECK_QSTAR_INTERVAL",
+		DefaultInterval: 300,
+		NoCount:         false,
+		SetTimestamp:    false,
+		Fn:              CheckQstar,
 	}
 	go checkQstar.Plan(quit)
 
