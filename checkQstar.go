@@ -90,7 +90,7 @@ func readFilesystem(filesystem string) (*params, error) {
 	// out, err := exec.Command("bash", "-c", "cat output.example.txt").Output()
 	out, err := exec.Command("bash", "-c", fmt.Sprintf("mmparam %s", filesystem)).Output()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to execute `mmparam` (%s)", err)
 	}
 
 	lines := reSplit.Split(string(out), -1)
@@ -107,7 +107,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Page size:") {
 			_, i, err := getSize(line)
 			if err != nil {
-				return nil, errors.New("failed to read `page_size`")
+				return nil, fmt.Errorf("failed to read `page_size` (%s)", err)
 			}
 			item["page_size"] = i
 			pageSize = i
@@ -117,7 +117,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Replicas:") {
 			i, err := getInt64(line)
 			if err != nil {
-				return nil, errors.New("failed to read `replicas`")
+				return nil, fmt.Errorf("failed to read `replicas` (%s)", err)
 			}
 			item["replicas"] = i
 			numReplicas = i
@@ -146,7 +146,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Cache root:") {
 			s, err := getString(line)
 			if err != nil {
-				return nil, errors.New("failed to read `cache_root`")
+				return nil, fmt.Errorf("failed to read `cache_root` (%s)", err)
 			}
 			item["cache_root"] = s
 			continue
@@ -156,7 +156,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Mount point:") {
 			s, err := getString(line)
 			if err != nil {
-				return nil, errors.New("failed to read `mount_point`")
+				return nil, fmt.Errorf("failed to read `mount_point` (%s)", err)
 			}
 			item["mount_point"] = s
 			continue
@@ -166,7 +166,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Max number of pages:") {
 			i, err := getPages(line)
 			if err != nil {
-				return nil, errors.New("failed to read `max_number_of_pages`")
+				return nil, fmt.Errorf("failed to read `max_number_of_pages` (%s)", err)
 			}
 			item["max_number_of_pages"] = i
 			continue
@@ -176,7 +176,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Low primary capacity:") {
 			i, err := getPages(line)
 			if err != nil {
-				return nil, errors.New("failed to read `low_primary_capacity`")
+				return nil, fmt.Errorf("failed to read `low_primary_capacity` (%s)", err)
 			}
 			item["low_primary_capacity_pages"] = i
 			item["low_primary_capacity_bytes"] = i * pageSize
@@ -187,7 +187,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "High primary capacity:") {
 			i, err := getPages(line)
 			if err != nil {
-				return nil, errors.New("failed to read `high_primary_capacity`")
+				return nil, fmt.Errorf("failed to read `high_primary_capacity` (%s)", err)
 			}
 			item["high_primary_capacity_pages"] = i
 			item["high_primary_capacity_bytes"] = i * pageSize
@@ -198,7 +198,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Read reserved capacity:") {
 			i, err := getPages(line)
 			if err != nil {
-				return nil, errors.New("failed to read `read_reserved_capacity`")
+				return nil, fmt.Errorf("failed to read `read_reserved_capacity` (%s)", err)
 			}
 			item["read_reserved_capacity_pages"] = i
 			item["read_reserved_capacity_bytes"] = i * pageSize
@@ -209,7 +209,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Prefetch priority period:") {
 			b, err := getBool(line)
 			if err != nil {
-				return nil, errors.New("failed to read `prefetch_priority_period`")
+				return nil, fmt.Errorf("failed to read `prefetch_priority_period` (%s)", err)
 			}
 			item["prefetch_priority_period"] = b
 			continue
@@ -219,7 +219,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Prefetching mode:") {
 			s, err := getString(line)
 			if err != nil {
-				return nil, errors.New("failed to read `prefetching_mode`")
+				return nil, fmt.Errorf("failed to read `prefetching_mode` (%s)", err)
 			}
 			item["prefetching_mode"] = s
 			continue
@@ -229,7 +229,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Cold prefetching:") {
 			b, err := getBool(line)
 			if err != nil {
-				return nil, errors.New("failed to read `cold_prefetching`")
+				return nil, fmt.Errorf("failed to read `cold_prefetching` (%s)", err)
 			}
 			item["cold_prefetching"] = b
 			continue
@@ -239,7 +239,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Cache write throttling:") {
 			b, err := getBool(line)
 			if err != nil {
-				return nil, errors.New("failed to read `cache_write_throttling`")
+				return nil, fmt.Errorf("failed to read `cache_write_throttling` (%s)", err)
 			}
 			item["cache_write_throttling"] = b
 			continue
@@ -249,7 +249,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Automatic keep in cache:") {
 			b, err := getBool(line)
 			if err != nil {
-				return nil, errors.New("failed to read `automatic_keep_in_cache`")
+				return nil, fmt.Errorf("failed to read `automatic_keep_in_cache` (%s)", err)
 			}
 			item["automatic_keep_in_cache"] = b
 			continue
@@ -259,7 +259,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Present pages:") {
 			i, err := getPages(line)
 			if err != nil {
-				return nil, errors.New("failed to read `present_pages`")
+				return nil, fmt.Errorf("failed to read `present_pages` (%s)", err)
 			}
 			item["present_pages"] = i
 			item["present_bytes"] = i * pageSize
@@ -270,32 +270,30 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Primary pages:") {
 			i, err := getPages(line)
 			if err != nil {
-				return nil, errors.New("failed to read `primary_pages`")
+				return nil, fmt.Errorf("failed to read `primary_pages` (%s)", err)
 			}
 			item["primary_pages"] = i
 			item["primary_bytes"] = i * pageSize
 			continue
 		}
 
-		// replicated_pages
+		// replicated_pages (optional)
 		if strings.HasPrefix(line, "Replicated pages:") {
 			i, err := getPages(line)
-			if err != nil {
-				return nil, errors.New("failed to read `replicated_pages`")
+			if err == nil {
+				item["replicated_pages"] = i
+				item["replicated_bytes"] = i * pageSize
 			}
-			item["replicated_pages"] = i
-			item["replicated_bytes"] = i * pageSize
 			continue
 		}
 
-		// archived_pages
+		// archived_pages (optional)
 		if strings.HasPrefix(line, "Archived pages:") {
 			i, err := getPages(line)
-			if err != nil {
-				return nil, errors.New("failed to read `archived_pages`")
+			if err == nil {
+				item["archived_pages"] = i
+				item["archived_bytes"] = i * pageSize
 			}
-			item["archived_pages"] = i
-			item["archived_bytes"] = i * pageSize
 			continue
 		}
 
@@ -303,7 +301,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Keep in cache:") {
 			i, err := getInt64(line)
 			if err != nil {
-				return nil, errors.New("failed to read `keep_in_cache`")
+				return nil, fmt.Errorf("failed to read `keep_in_cache` (%s)", err)
 			}
 			item["keep_in_cache"] = i
 		}
@@ -312,7 +310,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Archived since mount:") {
 			_, i, err := getSize(line)
 			if err != nil {
-				return nil, errors.New("failed to read `archived_since_mount`")
+				return nil, fmt.Errorf("failed to read `archived_since_mount` (%s)", err)
 			}
 			item["archived_since_mount"] = i
 			continue
@@ -322,7 +320,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Replicated since mount:") {
 			_, i, err := getSize(line)
 			if err != nil {
-				return nil, errors.New("failed to read `replicated_since_mount`")
+				return nil, fmt.Errorf("failed to read `replicated_since_mount` (%s)", err)
 			}
 			item["replicated_since_mount"] = i
 		}
@@ -331,7 +329,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Files in cache:") {
 			i, err := getInt64(line)
 			if err != nil {
-				return nil, errors.New("failed to read `files_in_cache`")
+				return nil, fmt.Errorf("failed to read `files_in_cache` (%s)", err)
 			}
 			item["files_in_cache"] = i
 			continue
@@ -341,7 +339,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Directories:") {
 			i, err := getInt64(line)
 			if err != nil {
-				return nil, errors.New("failed to read `directories`")
+				return nil, fmt.Errorf("failed to read `directories` (%s)", err)
 			}
 			item["directories"] = i
 			continue
@@ -351,7 +349,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Streams:") {
 			i, err := getInt64(line)
 			if err != nil {
-				return nil, errors.New("failed to read `streams`")
+				return nil, fmt.Errorf("failed to read `streams` (%s)", err)
 			}
 			item["streams"] = i
 			continue
@@ -361,7 +359,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Number of delayed events:") {
 			i, err := getInt64(line)
 			if err != nil {
-				return nil, errors.New("failed to read `number_of_delayed_events`")
+				return nil, fmt.Errorf("failed to read `number_of_delayed_events` (%s)", err)
 			}
 			item["number_of_delayed_events"] = i
 			continue
@@ -371,7 +369,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Read/write access:") {
 			s, err := getString(line)
 			if err != nil {
-				return nil, errors.New("failed to read `read_write_access`")
+				return nil, fmt.Errorf("failed to read `read_write_access` (%s)", err)
 			}
 			item["read_write_access"] = s
 			continue
@@ -381,7 +379,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Archiving:") {
 			s, err := getString(line)
 			if err != nil {
-				return nil, errors.New("failed to read `archiving`")
+				return nil, fmt.Errorf("failed to read `archiving` (%s)", err)
 			}
 			item["archiving"] = s
 			continue
@@ -447,7 +445,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Medium drive type:") {
 			s, err := getString(line)
 			if err != nil {
-				return nil, errors.New("failed to read `medium_drive_type`")
+				return nil, fmt.Errorf("failed to read `medium_drive_type` (%s)", err)
 			}
 			(*replica)["medium_drive_type"] = s
 			continue
@@ -457,7 +455,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Extent size:") {
 			_, i, err := getSize(line)
 			if err != nil {
-				return nil, errors.New("failed to read `extent_size`")
+				return nil, fmt.Errorf("failed to read `extent_size` (%s)", err)
 			}
 			(*replica)["extent_size"] = i
 			continue
@@ -467,7 +465,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Write pool count:") {
 			i, err := getInt64(line)
 			if err != nil {
-				return nil, errors.New("failed to read `write_pool_count`")
+				return nil, fmt.Errorf("failed to read `write_pool_count` (%s)", err)
 			}
 			(*replica)["write_pool_count"] = i
 			continue
@@ -477,7 +475,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Last write on:") {
 			s, err := getString(line)
 			if err != nil {
-				return nil, errors.New("failed to read `last_write_on`")
+				return nil, fmt.Errorf("failed to read `last_write_on` (%s)", err)
 			}
 			(*replica)["last_write_on"] = s
 			continue
@@ -487,7 +485,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Free space on current partition:") {
 			_, i, err := getSize(line)
 			if err != nil {
-				return nil, errors.New("failed to read `free_space_on_current_partition`")
+				return nil, fmt.Errorf("failed to read `free_space_on_current_partition` (%s)", err)
 			}
 			(*replica)["free_space_on_current_partition"] = i
 			continue
@@ -497,7 +495,7 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Compression:") {
 			b, err := getBool(line)
 			if err != nil {
-				return nil, errors.New("failed to read `compression`")
+				return nil, fmt.Errorf("failed to read `compression` (%s)", err)
 			}
 			(*replica)["compression"] = b
 			continue
@@ -516,7 +514,7 @@ func CheckQstar(_ *libagent.Check) (map[string][]map[string]any, error) {
 	// out, err := exec.Command("bash", "-c", "cat df.output.example.txt").Output()
 	out, err := exec.Command("bash", "-c", "df -t fuse.mcfs").Output()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to list fuse.mcfs filesystems: (%s)", err)
 	}
 
 	filesystems := []map[string]any{}

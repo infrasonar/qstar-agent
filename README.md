@@ -48,7 +48,7 @@ $ sudo touch /etc/systemd/system/infrasonar-qstar-agent.service
 $ sudo chmod 664 /etc/systemd/system/infrasonar-qstar-agent.service
 ```
 
-Using you favorite editor, add the content below to the file created
+Using you favorite editor, add the content below to the file created:
 
 ```
 [Unit]
@@ -60,9 +60,18 @@ Environment="TOKEN=<YOUR TOKEN HERE>"
 # Environment="ASSET_ID=<YOUR ASSET ID>"
 # Environment="STORAGE_PATH=<PATH_TO_STORE_ASSET_FILE>"
 ExecStart=/usr/sbin/infrasonar-qstar-agent
+User=root
 
 [Install]
 WantedBy=multi-user.target
+```
+
+> Note that the QStar agents needs root privileges to execute the mmparam command.
+
+It might be required to have the `mmparam` in `/usr/sbin`, for example:
+
+```bash
+$ ln -s /opt/QStar/bin/mmparam /usr/sbin/mmparam
 ```
 
 Reload systemd
