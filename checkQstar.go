@@ -309,20 +309,19 @@ func readFilesystem(filesystem string) (*params, error) {
 		// archived_since_mount
 		if strings.HasPrefix(line, "Archived since mount:") {
 			_, i, err := getSize(line)
-			if err != nil {
-				return nil, fmt.Errorf("failed to read `archived_since_mount` (%s)", err)
+			if err == nil {
+				item["archived_since_mount"] = i
 			}
-			item["archived_since_mount"] = i
 			continue
 		}
 
 		// replicated_since_mount
 		if strings.HasPrefix(line, "Replicated since mount:") {
 			_, i, err := getSize(line)
-			if err != nil {
-				return nil, fmt.Errorf("failed to read `replicated_since_mount` (%s)", err)
+			if err == nil {
+				item["replicated_since_mount"] = i
 			}
-			item["replicated_since_mount"] = i
+			continue
 		}
 
 		// files_in_cache
