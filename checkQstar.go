@@ -540,6 +540,12 @@ func CheckQstar(_ *libagent.Check) (map[string][]map[string]any, error) {
 	state["filesystems"] = filesystems
 	state["replicas"] = replicas
 
+	// Add the agent version
+	state["agent"] = []map[string]any{{
+		"name":    "qstar",
+		"version": version,
+	}}
+
 	// Print debug dump
 	// b, _ := json.MarshalIndent(state, "", "    ")
 	// log.Fatal(string(b))
