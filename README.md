@@ -9,7 +9,7 @@ Documentation: https://docs.infrasonar.com/collectors/agents/qstar/
 
 Environment                 | Default                       | Description
 ----------------------------|-------------------------------|-------------------
-`STORAGE_PATH`              | `HOME/.infrasonar/`           | Path where files are stored _(not used when `ASSET_ID` is set)_.
+`CONFIG_PATH`       		| `/etc/infrasonar` 			| Path where configuration files are loaded and stored _(note: for a user, the `$HOME` path will be used instead of `/etc`)_
 `TOKEN`                     | _required_                    | Token used for authentication _(This MUST be a container token)_.
 `ASSET_NAME`                | _none_                        | Initial Asset Name. This will only be used at the announce. Once the asset is created, `ASSET_NAME` will be ignored.
 `ASSET_ID`                  | _none_                        | Asset Id _(If not given, the asset Id will be stored and loaded from file)_.
@@ -30,6 +30,8 @@ Download the latest release:
 $ wget https://github.com/infrasonar/qstar-agent/releases/download/v0.1.0/qstar-agent
 ```
 
+> _The pre-build binary is build for the **linux-amd64** platform. For other platforms build from source using the command:_ `CGO_ENABLED=0 go build -o qstar-agent`
+
 Ensure the binary is executable:
 ```
 chmod +x qstar-agent
@@ -48,7 +50,7 @@ $ sudo touch /etc/systemd/system/infrasonar-qstar-agent.service
 $ sudo chmod 664 /etc/systemd/system/infrasonar-qstar-agent.service
 ```
 
-Using you favorite editor, add the content below to the file created:
+**1. Using you favorite editor, add the content below to the file created:**
 
 ```
 [Unit]
@@ -56,43 +58,41 @@ Description=InfraSonar QStar Agent
 Wants=network.target
 
 [Service]
-Environment="TOKEN=<YOUR TOKEN HERE>"
-# Environment="ASSET_ID=<YOUR ASSET ID>"
-# Environment="STORAGE_PATH=<PATH_TO_STORE_ASSET_FILE>"
+EnvironmentFile=/etc/infrasonar/qstar-agent.env
 ExecStart=/usr/sbin/infrasonar-qstar-agent
-User=root
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-> Note that the QStar agents needs root privileges to execute the mmparam command.
+**2. Create the file `/etc/infrasonar/qstar-agent.env` with at least:**
 
-It might be required to have the `mmparam` in `/usr/sbin`, for example:
-
-```bash
-$ ln -s /opt/QStar/bin/mmparam /usr/sbin/mmparam
+```
+TOKEN=<YOUR TOKEN HERE>
 ```
 
-Reload systemd
+Optionaly, add environment variable to the `qstar-agent.env` file for settings like `ASSET_ID` or `CONFIG_PATH` _(see all [environment variables](#environment-variables) in the table above)_.
+
+**3. Reload systemd:**
 
 ```bash
 $ sudo systemctl daemon-reload
 ```
 
-Install the service
+**4. Install the service:**
+
 ```bash
 $ sudo systemctl enable infrasonar-qstar-agent
 ```
 
-You may want to start/stop or view the status
+**Finally, you may want to start/stop or view the status:**
 ```bash
 $ sudo systemctl start infrasonar-qstar-agent
 $ sudo systemctl stop infrasonar-qstar-agent
 $ sudo systemctl status infrasonar-qstar-agent
 ```
 
-View logging:
+**View logging:**
 ```bash
 $ journalctl -u infrasonar-qstar-agent
 ```
