@@ -97,3 +97,10 @@ $ sudo systemctl status infrasonar-qstar-agent
 $ journalctl -u infrasonar-qstar-agent
 ```
 
+**mmparam not found**
+If the `mmparam` command is not found, this might be a problem with the path settings. As a solution a short link can be created:
+
+```
+ln -s /opt/QStar/bin/mmparam /usr/sbin/mmparam
+```
+
