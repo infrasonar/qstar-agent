@@ -15,8 +15,11 @@ Environment                 | Default                       | Description
 `ASSET_ID`                  | _none_                        | Asset Id _(If not given, the asset Id will be stored and loaded from file)_.
 `API_URI`                   | https://api.infrasonar.com    | InfraSonar API.
 `SKIP_VERIFY`				| _none_						| Set to `1` or something else to skip certificate validation.
+`LOG_DATE_FMT`              | `01/02/2006 15:04:05.999999`  | Use this format to read the timestamp from syslog.
+`LOG_FILE_PATH`             | `/opt/QStar/log/syslog`       | QStar syslog file.
+`LOG_BUF_SIZE`              | `8192`                        | Read this size from the log file _(at the end of the file)_.
 `CHECK_QSTAR_INTERVAL`      | `300`                         | Interval in seconds for the `qstar` check.
-
+`CHECK_LOG_INTERVAL`        | `300`                         | Interval in seconds for the `log` check.
 
 ## Build
 ```

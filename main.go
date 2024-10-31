@@ -16,6 +16,9 @@ func main() {
 	// Initialize Helper
 	libagent.GetHelper()
 
+	// Initialize the log helper
+	InitLogHelper()
+
 	// Set-up signal handler
 	quit := make(chan bool)
 	go libagent.SigHandler(quit)
@@ -40,6 +43,18 @@ func main() {
 		Fn:              CheckQstar,
 	}
 	go checkQstar.Plan(quit)
+
+	checkLog := libagent.Check{
+		Key:             "log",
+		Collector:       collector,
+		Asset:           asset,
+		IntervalEnv:     "CHECK_LOG_INTERVAL",
+		DefaultInterval: 300,
+		NoCount:         false,
+		SetTimestamp:    false,
+		Fn:              CheckLog,
+	}
+	go checkLog.Plan(quit)
 
 	// Wait for quit
 	<-quit
