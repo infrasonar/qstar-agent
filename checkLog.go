@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"os"
 	"strconv"
@@ -121,8 +122,8 @@ func CheckLog(_ *libagent.Check) (map[string][]map[string]any, error) {
 	state["log"] = items
 
 	// Print debug dump
-	// b, _ := json.MarshalIndent(state, "", "    ")
-	// log.Fatal(string(b))
+	b, _ := json.MarshalIndent(state, "", "    ")
+	log.Fatal(string(b))
 
 	return state, parseError
 }
