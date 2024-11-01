@@ -23,7 +23,7 @@ Environment                 | Default                       | Description
 
 ## Build
 ```
-CGO_ENABLED=0 go build -o qstar-agent
+CGO_ENABLED=0 go build -trimpath -o qstar-agent
 ```
 
 ## Installation
