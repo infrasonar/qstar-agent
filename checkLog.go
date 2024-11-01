@@ -103,7 +103,7 @@ func CheckLog(_ *libagent.Check) (map[string][]map[string]any, error) {
 		}
 
 		name := strconv.FormatInt(dt.UnixNano(), 10)
-		date := dt.UnixMilli()
+		timestamp := float64(dt.UnixMilli()) / 1000.0
 		message := strings.TrimSpace(line[lh.lsz:])
 
 		if name == prevName {
@@ -112,9 +112,9 @@ func CheckLog(_ *libagent.Check) (map[string][]map[string]any, error) {
 		prevName = name
 
 		items = append(items, map[string]any{
-			"name":    name,
-			"date":    date,
-			"message": message,
+			"name":      name,
+			"timestamp": timestamp,
+			"message":   message,
 		})
 	}
 
