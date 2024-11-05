@@ -81,6 +81,7 @@ func CheckLog(_ *libagent.Check) (map[string][]map[string]any, error) {
 	}
 
 	var parseError error
+	var item map[string]any = nil
 	prevName := ""
 	items := []map[string]any{}
 
@@ -93,29 +94,36 @@ func CheckLog(_ *libagent.Check) (map[string][]map[string]any, error) {
 		}
 
 		dtstr := line[:lh.lsz]
+		message := strings.TrimSpace(line[lh.lsz:])
+
 		dt, err := time.Parse(lh.layout, dtstr)
 		if err != nil {
-			if parseError == nil {
-				log.Printf("Failed to read date from line %v (line: %v, layout: %v)\n", i, dtstr, lh.layout)
+			if item == nil {
+				if parseError == nil {
+					log.Printf("Failed to read date from line %v (line: %v, layout: %v)\n", i, dtstr, lh.layout)
+				}
+				parseError = err
+			} else {
+				item["message"] = item["message"].(string) + "\n" + message
 			}
-			parseError = err
 			continue // Ignote lines with errors
 		}
 
 		name := strconv.FormatInt(dt.UnixNano(), 10)
 		timestamp := float64(dt.UnixMilli()) / 1000.0
-		message := strings.TrimSpace(line[lh.lsz:])
 
 		if name == prevName {
 			continue // Duplicate name
 		}
 		prevName = name
-
-		items = append(items, map[string]any{
+		item = map[string]any{
 			"name":      name,
 			"timestamp": timestamp,
+			"datestr":   dtstr,
 			"message":   message,
-		})
+		}
+
+		items = append(items, item)
 	}
 
 	state["log"] = items

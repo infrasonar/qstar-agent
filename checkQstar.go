@@ -138,6 +138,10 @@ func readFilesystem(filesystem string) (*params, error) {
 	}
 
 	var replica *map[string]any = nil
+	var present_bytes int64 = -1
+	var primary_bytes int64 = -1
+	var replicated_bytes int64 = -1
+	var archived_bytes int64 = -1
 
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
@@ -261,8 +265,9 @@ func readFilesystem(filesystem string) (*params, error) {
 			if err != nil {
 				return nil, fmt.Errorf("failed to read `present_pages` (%s)", err)
 			}
+			present_bytes = i * pageSize
 			item["present_pages"] = i
-			item["present_bytes"] = i * pageSize
+			item["present_bytes"] = present_bytes
 			continue
 		}
 
@@ -272,8 +277,9 @@ func readFilesystem(filesystem string) (*params, error) {
 			if err != nil {
 				return nil, fmt.Errorf("failed to read `primary_pages` (%s)", err)
 			}
+			primary_bytes = i * pageSize
 			item["primary_pages"] = i
-			item["primary_bytes"] = i * pageSize
+			item["primary_bytes"] = primary_bytes
 			continue
 		}
 
@@ -281,8 +287,9 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Replicated pages:") {
 			i, err := getPages(line)
 			if err == nil {
+				replicated_bytes = i * pageSize
 				item["replicated_pages"] = i
-				item["replicated_bytes"] = i * pageSize
+				item["replicated_bytes"] = replicated_bytes
 			}
 			continue
 		}
@@ -291,8 +298,9 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Archived pages:") {
 			i, err := getPages(line)
 			if err == nil {
+				archived_bytes = i * pageSize
 				item["archived_pages"] = i
-				item["archived_bytes"] = i * pageSize
+				item["archived_bytes"] = archived_bytes
 			}
 			continue
 		}
@@ -502,6 +510,12 @@ func readFilesystem(filesystem string) (*params, error) {
 			(*replica)["compression"] = b
 			continue
 		}
+	}
+
+	// calculate free bytes
+	free_bytes := present_bytes - (primary_bytes + replicated_bytes + archived_bytes)
+	if present_bytes >= 0 && primary_bytes >= 0 && replicated_bytes >= 0 && archived_bytes >= 0 && free_bytes >= 0 {
+		item["free_bytes"] = free_bytes
 	}
 
 	return &params{
