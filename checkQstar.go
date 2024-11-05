@@ -529,12 +529,17 @@ func CheckQstar(_ *libagent.Check) (map[string][]map[string]any, error) {
 		if strings.HasPrefix(line, "Filesystem") || line == "" {
 			continue
 		}
+
 		fields := strings.Fields(line)
-		if len(fields) >= 1 {
-			res, err := readFilesystem(fields[0])
+		if len(fields) > 0 {
+			// Get the first in line
+			first := fields[0]
+			// Read filesystem
+			res, err := readFilesystem(first)
 			if err != nil {
 				return nil, err
 			}
+
 			filesystems = append(filesystems, res.params)
 			replicas = append(replicas, res.replicas...)
 		}
