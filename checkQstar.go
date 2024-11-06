@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -529,34 +530,36 @@ func CheckQstar(_ *libagent.Check) (map[string][]map[string]any, error) {
 
 	// out, err := exec.Command("bash", "-c", "cat df.output.example.txt").Output()
 	out, err := exec.Command("bash", "-c", "df -t fuse.mcfs").Output()
-	if err != nil {
-		return nil, fmt.Errorf("failed to list fuse.mcfs filesystems: (%s)", err)
-	}
 
 	filesystems := []map[string]any{}
 	replicas := []map[string]any{}
-	lines := reSplit.Split(string(out), -1)
 
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
+	if err == nil {
+		lines := reSplit.Split(string(out), -1)
 
-		if strings.HasPrefix(line, "Filesystem") || line == "" {
-			continue
-		}
+		for _, line := range lines {
+			line = strings.TrimSpace(line)
 
-		fields := strings.Fields(line)
-		if len(fields) > 0 {
-			// Get the first in line
-			first := fields[0]
-			// Read filesystem
-			res, err := readFilesystem(first)
-			if err != nil {
-				return nil, err
+			if strings.HasPrefix(line, "Filesystem") || line == "" {
+				continue
 			}
 
-			filesystems = append(filesystems, res.params)
-			replicas = append(replicas, res.replicas...)
+			fields := strings.Fields(line)
+			if len(fields) > 0 {
+				// Get the first in line
+				first := fields[0]
+				// Read filesystem
+				res, err := readFilesystem(first)
+				if err != nil {
+					return nil, err
+				}
+
+				filesystems = append(filesystems, res.params)
+				replicas = append(replicas, res.replicas...)
+			}
 		}
+	} else {
+		log.Printf("Failed to execute: bash -c \"df -t fuse.mcfs\" (%v)\n", err)
 	}
 
 	state["filesystems"] = filesystems
