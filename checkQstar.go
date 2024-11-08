@@ -511,7 +511,11 @@ func readFilesystem(filesystem string) (*params, error) {
 
 	// calculate free bytes
 	if max_number_of_pages >= 0 && present_pages >= 0 {
-		item["free_bytes"] = (max_number_of_pages - present_pages) * pageSize
+		free_pages := max_number_of_pages - present_pages
+		if free_pages >= 0 {
+			item["free_pages"] = free_pages
+			item["free_bytes"] = free_pages * pageSize
+		}
 	}
 
 	return &params{
