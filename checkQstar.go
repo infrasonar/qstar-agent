@@ -139,10 +139,8 @@ func readFilesystem(filesystem string) (*params, error) {
 	}
 
 	var replica *map[string]any = nil
-	var present_bytes int64 = -1
-	var primary_bytes int64 = -1
-	var replicated_bytes int64 = -1
-	var archived_bytes int64 = -1
+	var present_pages int64 = -1
+	var max_number_of_pages int64 = -1
 
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
@@ -173,6 +171,7 @@ func readFilesystem(filesystem string) (*params, error) {
 			if err != nil {
 				return nil, fmt.Errorf("failed to read `max_number_of_pages` (%s)", err)
 			}
+			max_number_of_pages = i
 			item["max_number_of_pages"] = i
 			continue
 		}
@@ -266,9 +265,9 @@ func readFilesystem(filesystem string) (*params, error) {
 			if err != nil {
 				return nil, fmt.Errorf("failed to read `present_pages` (%s)", err)
 			}
-			present_bytes = i * pageSize
+			present_pages = i
 			item["present_pages"] = i
-			item["present_bytes"] = present_bytes
+			item["present_bytes"] = i * pageSize
 			continue
 		}
 
@@ -278,9 +277,8 @@ func readFilesystem(filesystem string) (*params, error) {
 			if err != nil {
 				return nil, fmt.Errorf("failed to read `primary_pages` (%s)", err)
 			}
-			primary_bytes = i * pageSize
 			item["primary_pages"] = i
-			item["primary_bytes"] = primary_bytes
+			item["primary_bytes"] = i * pageSize
 			continue
 		}
 
@@ -288,9 +286,8 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Replicated pages:") {
 			i, err := getPages(line)
 			if err == nil {
-				replicated_bytes = i * pageSize
 				item["replicated_pages"] = i
-				item["replicated_bytes"] = replicated_bytes
+				item["replicated_bytes"] = i * pageSize
 			}
 			continue
 		}
@@ -299,9 +296,8 @@ func readFilesystem(filesystem string) (*params, error) {
 		if strings.HasPrefix(line, "Archived pages:") {
 			i, err := getPages(line)
 			if err == nil {
-				archived_bytes = i * pageSize
 				item["archived_pages"] = i
-				item["archived_bytes"] = archived_bytes
+				item["archived_bytes"] = i * pageSize
 			}
 			continue
 		}
@@ -514,9 +510,8 @@ func readFilesystem(filesystem string) (*params, error) {
 	}
 
 	// calculate free bytes
-	free_bytes := present_bytes - (primary_bytes + replicated_bytes + archived_bytes)
-	if present_bytes >= 0 && primary_bytes >= 0 && replicated_bytes >= 0 && archived_bytes >= 0 && free_bytes >= 0 {
-		item["free_bytes"] = free_bytes
+	if max_number_of_pages >= 0 && present_pages >= 0 {
+		item["free_bytes"] = (max_number_of_pages - present_pages) * pageSize
 	}
 
 	return &params{
