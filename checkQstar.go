@@ -418,7 +418,7 @@ func readFilesystem(filesystem string) (*params, error) {
 					(*replica)["local_intergral_volume"] = fields[2]
 				} else if len(fields) == 2 {
 					(*replica)["location"] = fields[0]
-					(*replica)["local_intergral_volume"] = fields[2]
+					(*replica)["local_intergral_volume"] = fields[1]
 				}
 			}
 			online := false
