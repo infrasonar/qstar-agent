@@ -118,7 +118,7 @@ func CheckLog(_ *libagent.Check) (map[string][]map[string]any, error) {
 		prevName = name
 		item = map[string]any{
 			"name":      name,
-			"timestamp": timestamp,
+			"timestamp": libagent.IFloat64(timestamp),
 			"datestr":   dtstr,
 			"message":   message,
 		}
