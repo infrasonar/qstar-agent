@@ -94,7 +94,6 @@ func CheckLog(_ *libagent.Check) (map[string][]map[string]any, error) {
 		}
 
 		dtstr := line[:lh.lsz]
-		message := strings.TrimSpace(line[lh.lsz:])
 
 		dt, err := time.Parse(lh.layout, dtstr)
 		if err != nil {
@@ -104,10 +103,12 @@ func CheckLog(_ *libagent.Check) (map[string][]map[string]any, error) {
 				}
 				parseError = err
 			} else {
-				item["message"] = item["message"].(string) + "\n" + message
+				item["message"] = item["message"].(string) + "\n" + strings.TrimSpace(line)
 			}
-			continue // Ignote lines with errors
+			continue // Ignore lines with errors
 		}
+
+		message := strings.TrimSpace(line[lh.lsz:])
 
 		name := strconv.FormatInt(dt.UnixNano(), 10)
 		timestamp := float64(dt.UnixMilli()) / 1000.0
@@ -124,6 +125,10 @@ func CheckLog(_ *libagent.Check) (map[string][]map[string]any, error) {
 		}
 
 		items = append(items, item)
+	}
+
+	if len(items) > 0 {
+		parseError = nil // if we have at least one line parsed, we have no error
 	}
 
 	state["log"] = items
