@@ -30,7 +30,7 @@ CGO_ENABLED=0 go build -trimpath -o qstar-agent
 
 Download the latest release:
 ```bash
-$ wget https://github.com/infrasonar/qstar-agent/releases/download/v0.1.10/qstar-agent
+$ wget https://github.com/infrasonar/qstar-agent/releases/download/v1.0.0/qstar-agent
 ```
 
 > _The pre-build binary is build for the **linux-amd64** platform. For other platforms build from source using the command:_ `CGO_ENABLED=0 go build -o qstar-agent`
