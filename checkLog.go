@@ -89,8 +89,15 @@ func CheckLog(_ *libagent.Check) (map[string][]map[string]any, error) {
 	lines := strings.Split(strings.ReplaceAll(logStr, "\r\n", "\n"), "\n")
 
 	for i, line := range lines {
-		if (start != 0 && i == 0) || len(line) <= lh.lsz {
+		if start != 0 && i == 0 {
 			continue // Ignore fist line if start is not the begin
+		}
+
+		if len(line) <= lh.lsz {
+			if item != nil {
+				item["message"] = item["message"].(string) + "\n" + strings.TrimSpace(line)
+			}
+			continue // Ignore line if less than time field, but we do need to add this to a message if there is one
 		}
 
 		dtstr := line[:lh.lsz]
